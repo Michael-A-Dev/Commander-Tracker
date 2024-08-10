@@ -1,3 +1,3 @@
 Just a very simple window to track Commander damage when playing EDH with friends.
 
-![image](https://github.com/Michael-A-Dev/Commander-Tracker/assets/126216824/857be63e-9792-46b5-bec9-3217b610d350)
+![image](https://github.com/user-attachments/assets/4bac72aa-760d-46cb-b746-f947d61a1c8f)
