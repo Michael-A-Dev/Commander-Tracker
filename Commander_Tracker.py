@@ -1,5 +1,8 @@
+#!/usr/bin/python
 import customtkinter as ctk
 import CTkSpinbox
+import tksvg
+import Mana
 
 ## Functions ##
 def resetDamage():
@@ -52,15 +55,17 @@ root.grid_columnconfigure([1, 2], weight = 2)
 
 manaDots = ctk.CTkCanvas(root, width = 400, height = 40, bg = "#1a1a1a", highlightthickness = 0)
 manaDots.grid(row = 0, column = 0, columnspan = 3, padx = (5,5), pady = (5,5), sticky = "ew")
-colours = ["red", "green", "white", "blue", "black", "grey"]
+colours = ["#db8664", "#93b483", "#f0f2c0", "#b5cde3", "#aca29a", "#beb9b2"]
+symbols = [Mana.redManaSVG, Mana.greenManaSVG, Mana.whiteManaSVG, Mana.blueManaSVG, Mana.blackManaSVG, Mana.colourlessManaSVG]
 counters = []
 
 for i, colour in enumerate(colours):
     x = 20 + i * 50
     y = 20
-    radius = 6
-    manaDots.create_oval(x - radius, y - radius, x + radius, y + radius, fill = colour, outline = "white")
-    
+    manaSymbolSVG = tksvg.SvgImage(data=symbols[i])
+    manaSymbol = ctk.CTkLabel(root, text = "", image = manaSymbolSVG)
+    manaSymbol.place(x = x + 4,y = y, anchor = ctk.CENTER)
+
     counter = ctk.IntVar(value = 0)
     counters.append(counter)
 
