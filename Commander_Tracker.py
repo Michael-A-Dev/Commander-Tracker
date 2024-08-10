@@ -1,4 +1,3 @@
-import enum
 import customtkinter as ctk
 import CTkSpinbox
 
