@@ -1,2 +1,2 @@
-pyinstaller --onefile -w Commander_Tracker.py
+pyinstaller Commander_Tracker.py --onefile -w --collect-all="tksvg"
 pause
