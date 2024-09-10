@@ -11,10 +11,7 @@ instructions = "Enter your player names in the box to the left.\nEach name shoul
 
 ## Functions ##
 def getExePath():
-    if getattr(sys, 'frozen', False):
-        return sys._MEIPASS
-    else:
-        return os.path.dirname(os.path.abspath(sys.argv[0]))
+    return os.path.dirname(os.path.abspath(sys.argv[0]))
     
 def loadConfig(configPath):
     if os.path.exists(configPath):
