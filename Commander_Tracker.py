@@ -1,10 +1,78 @@
 #!/usr/bin/python
 import customtkinter as ctk
 import CTkSpinbox
-import tksvg
+import json
 import Mana
+import os
+import sys
+import tksvg
+
+instructions = "Enter your player names in the box to the left.\nEach name should be on a new line."
 
 ## Functions ##
+def getExePath():
+    if getattr(sys, 'frozen', False):
+        return sys._MEIPASS
+    else:
+        return os.path.dirname(os.path.abspath(sys.argv[0]))
+    
+def loadConfig(configPath):
+    if os.path.exists(configPath):
+        with open(configPath, 'r') as f:
+            try:
+                return json.load(f)
+            except json.JSONDecodeError:
+                return {'pos': {'x': 100, 'y': 100}, 'names': [""]}
+    return {'pos': {'x': 100, 'y': 100}, 'names': [""]}
+
+def saveConfig(window, names, configPath):
+    config = {
+        'pos': {'x': window.winfo_x(), 'y': window.winfo_y()},
+        'names': names
+    }
+    with open(configPath, 'w') as f:
+        json.dump(config, f)
+
+def onClose(window, names, configPath):
+    saveConfig(window, names, configPath)
+    window.destroy()
+    
+def nameUpdatePopup(root):
+    def saveNames():
+        newNames = namesBox.get("0.0", ctk.END).strip().split('\n')
+        updatedNames = [name.strip() for name in newNames]
+        names.clear()
+        names.extend(updatedNames)
+        updateNames()
+        saveConfig(root, names, configPath)
+        popup.destroy()
+    
+    rootX = root.winfo_x() + 10
+    rootY = root.winfo_y() + 10
+    popup = ctk.CTkToplevel(root)
+    popup.title("Names List")
+    popup.geometry(f"500x210+{rootX}+{rootY}")
+    popup.resizable(False, False)
+    
+    namesBox = ctk.CTkTextbox(popup)
+    namesBox.grid(row = 0, rowspan = 5, column = 0, padx = (5, 5), pady = (5, 5))
+    namesBox.insert("0.0", "\n".join(names))
+    
+    instructionLabel = ctk.CTkLabel(popup, text = instructions)
+    instructionLabel.grid(row = 0, column = 1, padx = (5, 5), pady = (5, 5))
+    
+    saveButton = ctk.CTkButton(popup, text = "Save Names", command = saveNames)
+    saveButton.grid(row = 4, column = 1, padx = (5, 5), pady = (5, 5))
+    
+    popup.grab_set()
+    popup.focus()
+    popup.transient(root)
+    
+def updateNames():
+    player1Name.configure(values = names)
+    player2Name.configure(values = names)
+    player3Name.configure(values = names)
+
 def resetDamage():
     player1Given.set(0)
     player1Taken.set(0)
@@ -46,8 +114,15 @@ def resetCounters():
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
 
+configFile = "tracker_config.json"
+configPath = os.path.join(getExePath(), configFile)
+
+config = loadConfig(configPath)
+pos = config.get('pos', {'x': 100, 'y': 100})
+names = config.get('names', ["","No Names"])
+
 root = ctk.CTk()
-root.geometry("400x250")
+root.geometry(f"400x250+{pos['x']}+{pos['y']}")
 root.title("Commander Tracker")
 root.resizable(False, False)
 root.grid_columnconfigure(0, weight = 1)
@@ -90,8 +165,6 @@ givenLabel.grid(row = 1, column = 1, padx = (5,5), pady = (5,5))
 takenLabel = ctk.CTkLabel(root, text = "Damage Taken", width = 150)
 takenLabel.grid(row = 1, column = 2, padx = (5,5), pady = (5,5))
 
-names = ["", "Al", "Brett", "Cain", "Dylan", "Michael", "Mitchell", "Nikki", "Other Alex"]
-
 ## Player 1 ##
 player1Name = ctk.CTkComboBox(root, values = names)
 player1Name.grid(row = 2, column = 0, padx = (5,5), pady = (5,5), sticky = "ew")
@@ -131,7 +204,11 @@ player3Taken.grid(row = 4, column = 2, padx = (5,5), pady = (5,5), sticky = "ew"
 ## Reset Buttons ##
 resetDamageButton = ctk.CTkButton(root, text = "Reset Damage", command = resetDamage)
 resetDamageButton.grid(row = 5, column = 0, padx = (5,5), pady = (5,5))
+optionsButton = ctk.CTkButton(root, text = "Options", command = lambda: nameUpdatePopup(root))
+optionsButton.grid(row = 5, column = 1, padx = (5,5), pady = (5,5))
 resetAllButton = ctk.CTkButton(root, text = "Reset All", command = resetAll)
 resetAllButton.grid(row = 5, column = 2, padx = (5,5), pady = (5,5))
+
+root.protocol("WM_DELETE_WINDOW", lambda: onClose(root, names, configPath))
 
 root.mainloop()
