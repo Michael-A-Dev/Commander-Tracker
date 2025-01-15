@@ -93,17 +93,21 @@ def resetAll():
     player3Given.set(0)
     player3Taken.set(0)
     
-    resetCounters()
+    clearAllMana()
     
-def updateCounter(event, counter_var):
+def uptickMana(event, counter_var):
     current_value = counter_var.get()
-    if event.num == 1:  # Left click
-        counter_var.set(current_value + 1)
-    elif event.num == 3:  # Right click
-        if current_value > 0:  # Prevent going below 0
-            counter_var.set(current_value - 1)
+    counter_var.set(current_value + 1)
 
-def resetCounters():
+def downtickMana(event, counter_var):
+    current_value = counter_var.get()
+    if current_value > 0:  # Prevent going below 0
+        counter_var.set(current_value - 1)
+        
+def clearMana(event, counter_var):
+    counter_var.set(0)
+
+def clearAllMana():
     for counter in counters:
         counter.set(0)
 
@@ -144,11 +148,13 @@ for i, colour in enumerate(colours):
     manaTracker = ctk.CTkLabel(root, textvariable = counter, text_color = "white", height = 18, width = 15)
     manaTracker.place(x = x + 4, y = y + 22, anchor = ctk.CENTER)
     
-    manaTracker.bind("<Button-1>", lambda event, var=counter: updateCounter(event, var))
-    manaTracker.bind("<Button-3>", lambda event, var=counter: updateCounter(event, var))
+    manaTracker.bind("<Button-1>", lambda event, var=counter: uptickMana(event, var))
+    manaTracker.bind("<Button-3>", lambda event, var=counter: downtickMana(event, var))
+    manaTracker.bind("<Shift-Button-1>", lambda event, var=counter: clearMana(event, var))
+    manaTracker.bind("<Control-Button-1>", lambda event, var=counter: clearAllMana())
 
-resetMana = ctk.CTkButton(root, text = "Reset Mana", command = resetCounters, width = 80)
-resetMana.place(x = 350, y = 30, anchor = ctk.CENTER)
+# resetMana = ctk.CTkButton(root, text = "Reset Mana", command = resetCounters, width = 80)
+# resetMana.place(x = 350, y = 30, anchor = ctk.CENTER)
 
 separator = ctk.CTkCanvas(root, height = 1, width = 400, bg = "#333333", highlightthickness = 0)
 separator.place(x = 0, y = 53)
@@ -156,10 +162,10 @@ separator.place(x = 0, y = 53)
 nameLabel = ctk.CTkLabel(root, text = "Name")
 nameLabel.grid(row = 1, column = 0, padx = (5, 5), pady = (5,5))
 
-givenLabel = ctk.CTkLabel(root, text = "Damage Given", width = 150)
+givenLabel = ctk.CTkLabel(root, text = "Damage Dealt", width = 150)
 givenLabel.grid(row = 1, column = 1, padx = (5,5), pady = (5,5))
 
-takenLabel = ctk.CTkLabel(root, text = "Damage Taken", width = 150)
+takenLabel = ctk.CTkLabel(root, text = "Damage Received", width = 150)
 takenLabel.grid(row = 1, column = 2, padx = (5,5), pady = (5,5))
 
 ## Player 1 ##
