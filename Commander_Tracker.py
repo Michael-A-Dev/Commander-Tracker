@@ -93,21 +93,21 @@ def resetAll():
     player3Given.set(0)
     player3Taken.set(0)
     
-    clearAllMana()
+    clearAllCounters()
     
-def uptickMana(event, counter_var):
+def uptickCounter(event, counter_var):
     current_value = counter_var.get()
     counter_var.set(current_value + 1)
 
-def downtickMana(event, counter_var):
+def downtickCounter(event, counter_var):
     current_value = counter_var.get()
     if current_value > 0:  # Prevent going below 0
         counter_var.set(current_value - 1)
         
-def clearMana(event, counter_var):
+def clearCounter(event, counter_var):
     counter_var.set(0)
 
-def clearAllMana():
+def clearAllCounters():
     for counter in counters:
         counter.set(0)
 
@@ -129,14 +129,17 @@ root.resizable(False, False)
 root.grid_columnconfigure(0, weight = 1)
 root.grid_columnconfigure([1, 2], weight = 2)
 
+bold_font = ctk.CTkFont()
+bold_font['weight'] = 'bold'
+
 manaDots = ctk.CTkCanvas(root, width = 400, height = 40, bg = "#1a1a1a", highlightthickness = 0)
 manaDots.grid(row = 0, column = 0, columnspan = 3, padx = (5,5), pady = (5,5), sticky = "ew")
 colours = ["#db8664", "#93b483", "#f0f2c0", "#b5cde3", "#aca29a", "#beb9b2"]
-symbols = [Mana.redManaSVG, Mana.greenManaSVG, Mana.whiteManaSVG, Mana.blueManaSVG, Mana.blackManaSVG, Mana.colourlessManaSVG]
+symbols = [Mana.redManaSVG, Mana.greenManaSVG, Mana.whiteManaSVG, Mana.blueManaSVG, Mana.blackManaSVG, Mana.colourlessManaSVG, Mana.poisonSVG, Mana.energySVG]
 counters = []
 
-for i, colour in enumerate(colours):
-    x = 20 + i * 50
+for i, symbol in enumerate(symbols):
+    x = 15 + i * 35
     y = 20
     manaSymbolSVG = tksvg.SvgImage(data=symbols[i])
     manaSymbol = ctk.CTkLabel(root, text = "", image = manaSymbolSVG)
@@ -148,37 +151,39 @@ for i, colour in enumerate(colours):
     manaTracker = ctk.CTkLabel(root, textvariable = counter, text_color = "white", height = 18, width = 15)
     manaTracker.place(x = x + 4, y = y + 22, anchor = ctk.CENTER)
     
-    manaTracker.bind("<Button-1>", lambda event, var=counter: uptickMana(event, var))
-    manaTracker.bind("<Button-3>", lambda event, var=counter: downtickMana(event, var))
-    manaTracker.bind("<Shift-Button-1>", lambda event, var=counter: clearMana(event, var))
-    manaTracker.bind("<Control-Button-1>", lambda event, var=counter: clearAllMana())
+    manaTracker.bind("<Button-1>", lambda event, var=counter: uptickCounter(event, var))
+    manaTracker.bind("<Button-3>", lambda event, var=counter: downtickCounter(event, var))
+    manaTracker.bind("<Shift-Button-1>", lambda event, var=counter: clearCounter(event, var))
+    manaTracker.bind("<Control-Button-1>", lambda event, var=counter: clearAllCounters())
 
 # resetMana = ctk.CTkButton(root, text = "Reset Mana", command = resetCounters, width = 80)
 # resetMana.place(x = 350, y = 30, anchor = ctk.CENTER)
 
+vert_separator = ctk.CTkCanvas(root, height = 54, width = 1, bg = "#333333", highlightthickness = 0)
+vert_separator.place(x = 213, y = 0)
 separator = ctk.CTkCanvas(root, height = 1, width = 400, bg = "#333333", highlightthickness = 0)
 separator.place(x = 0, y = 53)
 
-nameLabel = ctk.CTkLabel(root, text = "Name")
-nameLabel.grid(row = 1, column = 0, padx = (5, 5), pady = (5,5))
+nameLabel = ctk.CTkLabel(root, text = "Name", font = bold_font)
+nameLabel.grid(sticky = "S", row = 1, column = 0, padx = (5,5), pady = (10,0))
 
-givenLabel = ctk.CTkLabel(root, text = "Damage Dealt", width = 150)
-givenLabel.grid(row = 1, column = 1, padx = (5,5), pady = (5,5))
+givenLabel = ctk.CTkLabel(root, text = "Damage Dealt", font = bold_font, width = 150)
+givenLabel.grid(sticky = "S", row = 1, column = 1, padx = (5,5), pady = (10,0))
 
-takenLabel = ctk.CTkLabel(root, text = "Damage Received", width = 150)
-takenLabel.grid(row = 1, column = 2, padx = (5,5), pady = (5,5))
+takenLabel = ctk.CTkLabel(root, text = "Damage Received", font = bold_font, width = 150)
+takenLabel.grid(sticky = "S", row = 1, column = 2, padx = (5,5), pady = (10,0))
 
 ## Player 1 ##
 player1Name = ctk.CTkComboBox(root, values = names)
-player1Name.grid(row = 2, column = 0, padx = (5,5), pady = (5,5), sticky = "ew")
+player1Name.grid(row = 2, column = 0, padx = (5,5), pady = (0,5), sticky = "ew")
 
 player1Given = CTkSpinbox.CTkSpinbox(root, start_value = 0, min_value = 0, max_value = 21, scroll_value = 1, \
                                      font = ("Segoe UI", 13), height = 30, border_width = 0, corner_radius = 100, button_corner_radius = 100)
-player1Given.grid(row = 2, column = 1, padx = (5,5), pady = (5,5), sticky = "ew")
+player1Given.grid(row = 2, column = 1, padx = (5,5), pady = (0,5), sticky = "ew")
 
 player1Taken = CTkSpinbox.CTkSpinbox(root, start_value = 0, min_value = 0, max_value = 21, scroll_value = 1, \
                                      font = ("Segoe UI", 13), height = 30, border_width = 0, corner_radius = 100, button_corner_radius = 100)
-player1Taken.grid(row = 2, column = 2, padx = (5,5), pady = (5,5), sticky = "ew")
+player1Taken.grid(row = 2, column = 2, padx = (5,5), pady = (0,5), sticky = "ew")
 
 ## Player 2 ##
 player2Name = ctk.CTkComboBox(root, values = names)
