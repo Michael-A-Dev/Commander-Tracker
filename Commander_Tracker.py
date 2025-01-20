@@ -1,5 +1,6 @@
 #!/usr/bin/python
 import customtkinter as ctk
+import Custom_Counter
 import CTkSpinbox
 import json
 import Mana
@@ -110,7 +111,36 @@ def clearCounter(event, counter_var):
 def clearAllCounters():
     for counter in counters:
         counter.set(0)
+        
+def openCustomCounter(root, custom_counters):
+    def createCounter(event = None):
+        popup.destroy()
+        if not name.get() == "":
+            new_counter = Custom_Counter.Custom_Counter(root, name.get())
+            custom_counters.append(new_counter)
+    
+    rootX = root.winfo_x() + 10
+    rootY = root.winfo_y() + 10
+    popup = ctk.CTkToplevel(root)
+    popup.title("Name Counter")
+    popup.geometry(f"150x110+{rootX}+{rootY}")
+    popup.resizable(False, False)
+    
+    nameLabel = ctk.CTkLabel(popup, text = "Custom Counter Name")
+    nameLabel.grid(row = 0, column = 0, padx = (5,5), pady = (0,5), sticky = "ew")
+    
+    name = ctk.StringVar()
+    nameEntry = ctk.CTkEntry(popup, textvariable = name, justify = ctk.CENTER)
+    nameEntry.grid(row = 1, column = 0, padx = (5,5), pady = (0,5), sticky = "ew")
+    nameEntry.bind('<Return>', createCounter)
+    
+    createButton = ctk.CTkButton(popup, text = "Create Counter", command = createCounter)
+    createButton.grid(row = 3, column = 0, padx = (5, 5), pady = (5, 5), sticky = "ew")
 
+    popup.transient(root)
+    popup.focus()
+    popup.grab_set()
+    
 ## Window Settings ##
 ctk.set_appearance_mode("dark")
 ctk.set_default_color_theme("dark-blue")
@@ -137,6 +167,7 @@ manaDots.grid(row = 0, column = 0, columnspan = 3, padx = (5,5), pady = (5,5), s
 colours = ["#db8664", "#93b483", "#f0f2c0", "#b5cde3", "#aca29a", "#beb9b2"]
 symbols = [Mana.redManaSVG, Mana.greenManaSVG, Mana.whiteManaSVG, Mana.blueManaSVG, Mana.blackManaSVG, Mana.colourlessManaSVG, Mana.poisonSVG, Mana.energySVG]
 counters = []
+custom_counters = []
 
 for i, symbol in enumerate(symbols):
     x = 15 + i * 35
@@ -156,8 +187,8 @@ for i, symbol in enumerate(symbols):
     manaTracker.bind("<Shift-Button-1>", lambda event, var=counter: clearCounter(event, var))
     manaTracker.bind("<Control-Button-1>", lambda event, var=counter: clearAllCounters())
 
-# resetMana = ctk.CTkButton(root, text = "Reset Mana", command = resetCounters, width = 80)
-# resetMana.place(x = 350, y = 30, anchor = ctk.CENTER)
+newCounter = ctk.CTkButton(root, text = "Custom Counter", command = lambda: openCustomCounter(root, custom_counters), width = 80)
+newCounter.place(x = 340, y = 27, anchor = ctk.CENTER)
 
 vert_separator = ctk.CTkCanvas(root, height = 54, width = 1, bg = "#333333", highlightthickness = 0)
 vert_separator.place(x = 213, y = 0)
