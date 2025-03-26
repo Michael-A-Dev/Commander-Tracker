@@ -164,7 +164,6 @@ bold_font['weight'] = 'bold'
 
 manaDots = ctk.CTkCanvas(root, width = 400, height = 40, bg = "#1a1a1a", highlightthickness = 0)
 manaDots.grid(row = 0, column = 0, columnspan = 3, padx = (5,5), pady = (5,5), sticky = "ew")
-colours = ["#db8664", "#93b483", "#f0f2c0", "#b5cde3", "#aca29a", "#beb9b2"]
 symbols = [Mana.redManaSVG, Mana.greenManaSVG, Mana.whiteManaSVG, Mana.blueManaSVG, Mana.blackManaSVG, Mana.colourlessManaSVG, Mana.poisonSVG, Mana.energySVG]
 counters = []
 custom_counters = []
@@ -182,6 +181,10 @@ for i, symbol in enumerate(symbols):
     manaTracker = ctk.CTkLabel(root, textvariable = counter, text_color = "white", height = 18, width = 15)
     manaTracker.place(x = x + 4, y = y + 22, anchor = ctk.CENTER)
     
+    manaSymbol.bind("<Button-1>", lambda event, var=counter: uptickCounter(event, var))
+    manaSymbol.bind("<Button-3>", lambda event, var=counter: downtickCounter(event, var))
+    manaSymbol.bind("<Shift-Button-1>", lambda event, var=counter: clearCounter(event, var))
+    manaSymbol.bind("<Control-Button-1>", lambda event, var=counter: clearAllCounters())
     manaTracker.bind("<Button-1>", lambda event, var=counter: uptickCounter(event, var))
     manaTracker.bind("<Button-3>", lambda event, var=counter: downtickCounter(event, var))
     manaTracker.bind("<Shift-Button-1>", lambda event, var=counter: clearCounter(event, var))
