@@ -16,9 +16,9 @@ class Custom_Counter(object):
                        height = 30, width = 120, \
                        border_width = 0, corner_radius = 100, button_corner_radius = 100)
         
-        self.parentX = self.parent.winfo_x() - 130
-        self.parentY = self.parent.winfo_y()
-        self.root.geometry(f"130x75+{self.parentX}+{self.parentY}")
+        self.parent_x = self.parent.winfo_x() - 130
+        self.parent_y = self.parent.winfo_y()
+        self.root.geometry(f"130x75+{self.parent_x}+{self.parent_y}")
         self.root.resizable(False, False)
         
         self.name.grid(row = 0, column = 0, padx = (5,5), pady = (0,5), sticky = "ew")

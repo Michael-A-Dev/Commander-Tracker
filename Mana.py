@@ -1,4 +1,10 @@
-blackManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+
+symbol_list = []
+
+def get_all_symbols():
+    return symbol_list
+
+black_mana_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 16 16"
    version="1.1"
@@ -50,8 +56,9 @@ blackManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
 </svg>
 """
+symbol_list.append(black_mana_svg)
 
-blueManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+blue_mana_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 16 16"
    version="1.1"
@@ -101,8 +108,9 @@ blueManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
        id="path1" />
   </g>
 </svg>"""
+symbol_list.append(blue_mana_svg)
 
-colourlessManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+colourless_mana_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 16 16"
    version="1.1"
@@ -150,8 +158,9 @@ colourlessManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
 </svg>
 """
+symbol_list.append(colourless_mana_svg)
 
-greenManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+green_mana_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 16 16"
    version="1.1"
@@ -199,8 +208,9 @@ greenManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
 </svg>
 """
+symbol_list.append(green_mana_svg)
 
-redManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+red_mana_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 16 16"
    version="1.1"
@@ -251,8 +261,9 @@ redManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
 </svg>
 """
+symbol_list.append(red_mana_svg)
 
-whiteManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+white_mana_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 16 16"
    version="1.1"
@@ -303,8 +314,9 @@ whiteManaSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
 </svg>
 """
+symbol_list.append(white_mana_svg)
 
-poisonSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+poison_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 9.0593691 15.99984"
    version="1.1"
@@ -344,8 +356,9 @@ poisonSVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
      style="fill:#eeeded;stroke-width:0.16" />
 </svg>
 """
+symbol_list.append(poison_svg)
 
-energySVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+energy_svg = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
    viewBox="0 0 16 16"
    version="1.1"
@@ -397,3 +410,4 @@ energySVG = """<?xml version="1.0" encoding="UTF-8" standalone="no"?>
   </g>
 </svg>
 """
+symbol_list.append(energy_svg)
