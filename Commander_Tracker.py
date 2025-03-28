@@ -49,14 +49,11 @@ class Commander_Tracker(ctk.CTk):
             counter_tracker = ctk.CTkLabel(self, textvariable = counter, text_color = "white", height = 18, width = 15)
             counter_tracker.place(x = x + 4, y = y + 22, anchor = ctk.CENTER)
     
-            counter_symbol.bind("<Button-1>", lambda event, var=counter: self.uptick_counter(event, var))
-            counter_symbol.bind("<Button-3>", lambda event, var=counter: self.downtick_counter(event, var))
-            counter_symbol.bind("<Shift-Button-1>", lambda event, var=counter: self.clear_counter(event, var))
-            counter_symbol.bind("<Control-Button-1>", lambda event, var=counter: self.clear_all_counters())
-            counter_tracker.bind("<Button-1>", lambda event, var=counter: self.uptick_counter(event, var))
-            counter_tracker.bind("<Button-3>", lambda event, var=counter: self.downtick_counter(event, var))
-            counter_tracker.bind("<Shift-Button-1>", lambda event, var=counter: self.clear_counter(event, var))
-            counter_tracker.bind("<Control-Button-1>", lambda event, var=counter: self.clear_all_counters())
+            for c in [counter_symbol, counter_tracker]:
+                c.bind("<Button-1>", lambda event, var=counter: self.event_handler(event, var))
+                c.bind("<Button-3>", lambda event, var=counter: self.event_handler(event, var))
+                c.bind("<Shift-Button-1>", lambda event, var=counter: self.event_handler(event, var))
+                c.bind("<Control-Button-1>", lambda event, var=counter: self.event_handler(event, var))
 
         custom_counter = ctk.CTkButton(self, text = "Custom Counter", command = lambda: self.custom_counter_window(), width = 80)
         custom_counter.place(x = 340, y = 27, anchor = ctk.CENTER)
@@ -206,6 +203,19 @@ class Commander_Tracker(ctk.CTk):
     
         self.clear_all_counters()
     
+    def event_handler(self, event, counter):
+        """Handles click events on the mana/poison/energy counters"""
+        if event.type == "4": # Button Press
+            if event.num == 1: # Left click
+                if event.state & 0x1: # with Shift
+                    self.clear_counter(event, counter)
+                elif event.state & 0x4: # with Ctrl
+                    self.clear_all_counters()
+                else:
+                    self.uptick_counter(event, counter)
+            elif event.num == 3: # Right click
+                self.downtick_counter(event, counter)
+
     def uptick_counter(self, event, counter_var):
         current_value = counter_var.get()
         counter_var.set(current_value + 1)
