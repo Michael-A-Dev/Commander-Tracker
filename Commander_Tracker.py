@@ -23,18 +23,16 @@ class Commander_Tracker(ctk.CTk):
         self.geometry(f"400x250+{self.pos['x']}+{self.pos['y']}")
         self.title("Commander Tracker")
         self.resizable(False, False)
+        self.grid_rowconfigure(0, weight = 1, minsize = 50)
         self.grid_columnconfigure(0, weight = 1)
         self.grid_columnconfigure([1, 2], weight = 2)
 
         self.bold_font = ctk.CTkFont()
         self.bold_font['weight'] = 'bold'
 
-        counters_canvas = ctk.CTkCanvas(self, width = 400, height = 40, bg = "#1a1a1a", highlightthickness = 0)
-        counters_canvas.grid(row = 0, column = 0, columnspan = 3, padx = (5,5), pady = (5,5), sticky = "ew")
         symbols = Mana.get_all_symbols()
         
         self.counters = []
-        self.custom_counters = []
 
         for i, symbol in enumerate(symbols):
             x = 15 + i * 35
@@ -236,8 +234,7 @@ class Commander_Tracker(ctk.CTk):
         def create_custom_counter(event = None):
             popup.destroy()
             if not name.get() == "":
-                new_counter = Custom_Counter.Custom_Counter(self, name.get())
-                self.custom_counters.append(new_counter)
+                Custom_Counter.Custom_Counter(self, name.get())
     
         root_x = self.winfo_x() + 10
         root_y = self.winfo_y() + 10
