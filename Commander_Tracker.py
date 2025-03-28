@@ -39,7 +39,7 @@ class Commander_Tracker(ctk.CTk):
         for i, symbol in enumerate(symbols):
             x = 15 + i * 35
             y = 20
-            counter_symbol_svg = tksvg.SvgImage(data=symbols[i])
+            counter_symbol_svg = tksvg.SvgImage(data=symbol)
             counter_symbol = ctk.CTkLabel(self, text = "", image = counter_symbol_svg)
             counter_symbol.place(x = x + 4, y = y, anchor = ctk.CENTER)
 
@@ -208,24 +208,24 @@ class Commander_Tracker(ctk.CTk):
         if event.type == "4": # Button Press
             if event.num == 1: # Left click
                 if event.state & 0x1: # with Shift
-                    self.clear_counter(event, counter)
+                    self.clear_counter(counter)
                 elif event.state & 0x4: # with Ctrl
                     self.clear_all_counters()
                 else:
-                    self.uptick_counter(event, counter)
+                    self.uptick_counter(counter)
             elif event.num == 3: # Right click
-                self.downtick_counter(event, counter)
+                self.downtick_counter(counter)
 
-    def uptick_counter(self, event, counter_var):
+    def uptick_counter(self, counter_var):
         current_value = counter_var.get()
         counter_var.set(current_value + 1)
 
-    def downtick_counter(self, event, counter_var):
+    def downtick_counter(self, counter_var):
         current_value = counter_var.get()
         if current_value > 0:  # Prevent going below 0
             counter_var.set(current_value - 1)
         
-    def clear_counter(self, event, counter_var):
+    def clear_counter(self, counter_var):
         counter_var.set(0)
 
     def clear_all_counters(self):
