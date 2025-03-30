@@ -30,13 +30,15 @@ class Commander_Tracker(ctk.CTk):
         self.header_frame = ctk.CTkFrame(self) # For mana/options/reset widgets
         self.header_frame.grid(row = 0, column = 0, sticky = "nsew")
         self.header_frame.grid_rowconfigure(0, weight = 1, minsize = 50)
-        self.header_frame.grid_columnconfigure(0, minsize = 25)
-        self.header_frame.grid_columnconfigure([1, 2, 3, 4], weight = 2, minsize = 50)
+        self.header_frame.grid_columnconfigure(0, weight = 0, minsize = 25)
+        self.header_frame.grid_columnconfigure([1], weight = 2, minsize = 100)
+        self.header_frame.grid_columnconfigure([2, 3, 4, 5], weight = 1, minsize = 50)
 
         self.player_frame = ctk.CTkFrame(self) # For the player damage details
         self.player_frame.grid(row = 1, column = 0, sticky = "nsew")
-        self.player_frame.grid_columnconfigure(0, minsize = 25)
-        self.player_frame.grid_columnconfigure([1, 2, 3], weight = 2, minsize = 50)
+        self.player_frame.grid_columnconfigure(0, weight = 0, minsize = 25)
+        self.player_frame.grid_columnconfigure([1], weight = 2, minsize = 100)
+        self.player_frame.grid_columnconfigure([2, 3], weight = 1, minsize = 100)
         
         ## Player Rows ##
         self.player_rows = []
@@ -70,13 +72,13 @@ class Commander_Tracker(ctk.CTk):
                 c.bind("<Shift-Button-1>", lambda event, var=counter: self.event_handler(event, var))
                 c.bind("<Control-Button-1>", lambda event, var=counter: self.event_handler(event, var))
 
-        self.counter_frame.grid(row = 0, column = 0, columnspan = 3, sticky = "w")
+        self.counter_frame.grid(row = 0, column = 0, columnspan = 2, sticky = "w")
 
         ## Create header frame ##
-        custom_counter = ctk.CTkButton(self.header_frame, text = "Add Counter", command = lambda: self.custom_counter_window(), width = 80)
-        custom_counter.grid(row = 0, column = 3, padx = (5, 5))
-        options_button = ctk.CTkButton(self.header_frame, text = "Options", command = lambda: self.options_window(), width = 50)
-        options_button.grid(row = 0, column = 4, padx = (5,5))
+        custom_counter = ctk.CTkButton(self.header_frame, text = "Add Counter", command = lambda: self.custom_counter_window())
+        custom_counter.grid(row = 0, column = 2, columnspan = 2, padx = (5,5))
+        options_button = ctk.CTkButton(self.header_frame, text = "Options", command = lambda: self.options_window())
+        options_button.grid(row = 0, column = 4, columnspan = 2, padx = (5,5))
 
         vert_separator = ctk.CTkCanvas(self.header_frame, height = 54, width = 1, bg = "#333333", highlightthickness = 0)
         vert_separator.place(x = 213, y = 0)
@@ -87,21 +89,21 @@ class Commander_Tracker(ctk.CTk):
 
         ## Reset Buttons ##
         reset_damage_button = ctk.CTkButton(self.header_frame, text = "Reset Damage", command = self.reset_damage)
-        reset_damage_button.grid(row = 1, column = 2, columnspan = 2, padx = (5,5), pady = (5,5))
+        reset_damage_button.grid(row = 1, column = 2, columnspan = 2, padx = (5,5), pady = (10,5))
         reset_all_button = ctk.CTkButton(self.header_frame, text = "Reset All", command = self.reset_all)
-        reset_all_button.grid(row = 1, column = 4, padx = (5,5), pady = (5,5))
+        reset_all_button.grid(row = 1, column = 4, columnspan = 2, padx = (5,5), pady = (10,5))
 
         add_player_button = ctk.CTkButton(self.header_frame, text = "+", command = self.add_player, width = 25, height = 25)
         add_player_button.grid(row = 2, column = 0, padx = (5,5), pady = (5,5))
 
         name_label = ctk.CTkLabel(self.header_frame, text = "Name", font = self.bold_font, width = 100)
-        name_label.grid(sticky = "S", row = 2, column = 1, columnspan = 2, padx = (5,5), pady = (5,5))
+        name_label.grid(sticky = "S", row = 2, column = 1, padx = (5,5), pady = (5,5))
 
         damage_dealt_label = ctk.CTkLabel(self.header_frame, text = "Damage Dealt", font = self.bold_font, width = 100)
-        damage_dealt_label.grid(sticky = "S", row = 2, column = 3, padx = (5,5), pady = (5,5))
+        damage_dealt_label.grid(sticky = "S", row = 2, column = 2, columnspan = 2, padx = (5,5), pady = (5,5))
 
         damage_received_label = ctk.CTkLabel(self.header_frame, text = "Damage Received", font = self.bold_font, width = 100)
-        damage_received_label.grid(sticky = "S", row = 2, column = 4, padx = (5,5), pady = (5,5))
+        damage_received_label.grid(sticky = "S", row = 2, column = 4, columnspan = 2, padx = (5,5), pady = (5,5))
         
         ## Adds 3 players by default. ##
         for i in range(3):
