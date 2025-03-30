@@ -97,8 +97,8 @@ class Commander_Tracker(ctk.CTk):
         reset_all_button.grid(row = 1, column = 3, padx = (5,5), pady = (10,5))
 
         ## Create table header frame. ##
-        add_player_button = ctk.CTkButton(self.header_frame, text = "+", command = self.add_player, width = 25, height = 25)
-        add_player_button.grid(row = 0, column = 0, padx = (5,5), pady = (5,5))
+        self.add_player_button = ctk.CTkButton(self.header_frame, text = "+", command = self.add_player, width = 25, height = 25)
+        self.add_player_button.grid(row = 0, column = 0, padx = (5,5), pady = (5,5))
 
         name_label = ctk.CTkLabel(self.header_frame, text = "Name", font = self.bold_font, width = 100)
         name_label.grid(sticky = "S", row = 0, column = 1, padx = (5,5), pady = (5,5))
@@ -118,6 +118,9 @@ class Commander_Tracker(ctk.CTk):
     def add_player(self):
         
         row_index = len(self.player_rows)
+
+        if row_index == 9:
+            self.add_player_button.configure(state = "disabled")
 
         ## Player ##
         player_number = len(self.player_rows) # Row identifier
@@ -144,6 +147,8 @@ class Commander_Tracker(ctk.CTk):
     def delete_player(self, index):
         if len(self.player_rows) == 1:
             return
+        elif len(self.player_rows) == 10:
+            self.add_player_button.configure(state = "normal")
         
         for player in self.player_rows:
             if player[0] == index:
