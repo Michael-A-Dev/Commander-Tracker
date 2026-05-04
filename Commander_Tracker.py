@@ -31,7 +31,7 @@ class Commander_Tracker(ctk.CTk):
         self.mana_frame.grid(row = 0, column = 0, sticky = "nsew")
         self.mana_frame.grid_rowconfigure(0, weight = 1, minsize = 50)
 
-        self.header_frame = ctk.CTkFrame(self) # For mana/options/reset widgets
+        self.header_frame = ctk.CTkFrame(self) # For player table headers
         self.header_frame.grid(row = 1, column = 0, sticky = "nsew")
         self.header_frame.grid_columnconfigure(0, weight = 0, minsize = 25)
         self.header_frame.grid_columnconfigure([1], weight = 3, minsize = 160)
@@ -50,6 +50,7 @@ class Commander_Tracker(ctk.CTk):
         self.bold_font = ctk.CTkFont()
         self.bold_font['weight'] = 'bold'
 
+        ## Create mana frame ##
         ## Create clickable mana/counter symbols ##
         symbols = Mana.get_all_symbols()
         self.counters = []
@@ -77,7 +78,6 @@ class Commander_Tracker(ctk.CTk):
 
         self.counter_frame.grid(row = 0, column = 0, columnspan = 2, sticky = "w")
 
-        ## Create header frame ##
         custom_counter = ctk.CTkButton(self.mana_frame, text = "Add Counter", command = lambda: self.custom_counter_window(), width = 100)
         custom_counter.grid(row = 0, column = 2, padx = (5,5))
         options_button = ctk.CTkButton(self.mana_frame, text = "Options", command = lambda: self.options_window(), width = 70)
@@ -116,11 +116,11 @@ class Commander_Tracker(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
 
     def add_player(self):
+        """Adds a new player row."""
         
         row_index = len(self.player_rows)
-
-        if row_index == 9:
-            self.add_player_button.configure(state = "disabled")
+        if row_index >= 9:
+            self.add_player_button.configure(state = "disabled") # No more players beyond 10.
 
         ## Player ##
         player_number = len(self.player_rows) # Row identifier
@@ -141,14 +141,14 @@ class Commander_Tracker(ctk.CTk):
         player_taken.grid(row = row_index, column = 3, padx = (5,5), pady = (0,5), sticky = "ew")
         
         self.player_rows.append((player_number, delete_button, player_name, player_given, player_taken))
-            
         self.update_layout()
     
     def delete_player(self, index):
+        """Deletes a player row."""
         if len(self.player_rows) == 1:
             return
         elif len(self.player_rows) == 10:
-            self.add_player_button.configure(state = "normal")
+            self.add_player_button.configure(state = "normal") # Re-enable button once back under 10 players.
         
         for player in self.player_rows:
             if player[0] == index:
@@ -158,7 +158,7 @@ class Commander_Tracker(ctk.CTk):
                 self.player_rows.remove(player)
                 break
         
-        for new_index, player in enumerate(self.player_rows):
+        for new_index, player in enumerate(self.player_rows): # Reconfigure the rows to close any gaps.
             player[1].grid_configure(row=new_index, column=0) # Delete Button
             player[2].grid_configure(row=new_index, column=1) # Name Dropdown
             player[3].grid_configure(row=new_index, column=2) # Damage Given
@@ -167,9 +167,13 @@ class Commander_Tracker(ctk.CTk):
         self.update_layout()
 
     def get_exe_path(self):
+        """Gets the absolute path of the running script.
+        
+        This is used for saving/loading the config."""
         return os.path.dirname(os.path.abspath(sys.argv[0]))
     
     def load_config(self):
+        """Load settings from a .json file"""
         if os.path.exists(self.config_path):
             with open(self.config_path, 'r') as f:
                 try:
@@ -179,6 +183,7 @@ class Commander_Tracker(ctk.CTk):
         return {'pos': {'x': 100, 'y': 100}, 'names': [""]}
 
     def save_config(self):
+        """Save settings into a .json file"""
         config = {
             'pos': {'x': self.winfo_x(), 'y': self.winfo_y()},
             'names': self.names
@@ -187,22 +192,26 @@ class Commander_Tracker(ctk.CTk):
             json.dump(config, f)
     
     def update_names(self):
+        """Updates the available names in the player dropdown boxes"""
         for player in self.player_rows:
             for p in player:
                 if type(p) == ctk.CTkComboBox:
                     p.configure(values = self.names)
 
     def update_layout(self):
+        """Forces an update and redraw of the window"""
         self.update_idletasks()
         self.geometry(f"{self.winfo_reqwidth()}x{self.winfo_reqheight()}")
 
     def reset_damage(self):
+        """Reset all damage counters."""
         for player in self.player_rows:
             for p in player:
                 if type(p) == CTkSpinbox.CTkSpinbox:
                     p.set(0)
 
     def reset_all(self):
+        """Resets all widgets to a completely blank state"""
         for player in self.player_rows:
             for p in player:
                 if type(p) == ctk.CTkComboBox:
@@ -242,6 +251,7 @@ class Commander_Tracker(ctk.CTk):
             counter.set(0)
         
     def options_window(self):
+        """Opens the options popup window."""
         def save_options(self):
             new_names = names_box.get("0.0", ctk.END).strip().split('\n')
             updated_names = [name.strip() for name in new_names]
@@ -273,6 +283,7 @@ class Commander_Tracker(ctk.CTk):
         popup.grab_set()
     
     def custom_counter_window(self):
+        """Opens the custom counter window and creates a customised counter"""
         def create_custom_counter(event = None):
             popup.destroy()
             if not name.get() == "":
