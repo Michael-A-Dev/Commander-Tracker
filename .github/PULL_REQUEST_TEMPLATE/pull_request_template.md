@@ -1,4 +1,4 @@
-[CLOSING] <Link to GitHub Issue>
+[CLOSING] {Link to GitHub Issue}
 
 
 ## Description
