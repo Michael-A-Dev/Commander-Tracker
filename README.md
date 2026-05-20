@@ -3,16 +3,16 @@
 A lightweight tracker for EDH / Commander games using a simple desktop GUI.
 
 ## Features
-* Track mana, experience and poison.
+* Track mana, energy, and poison.
 * Track damage dealt by and received from up to 10 players.
 * Create custom counters as needed. 
 * Store names of friends and regular players.
 
 ## Shortcuts
-* Left-click adds to a mana counter
-* Right-click subtracts from a mana counter
-* Shift + Left-click resets mana counter to 0
-* Ctrl + Left-click resets all mana counters to 0
+* Left-click adds to mana, poison, and energy counters
+* Right-click subtracts from mana, poison, and energy counters
+* Shift + Left-click resets mana, poison, and energy counters to 0
+* Ctrl + Left-click resets all mana, poison, and energy counters to 0
 
 ![Application Screenshot](./image/app_screenshot.png)
 
