@@ -2,6 +2,6 @@
 build/
 *.spec
 /dist
-/__pycache__
+*__pycache__
 *.json
 .venv
