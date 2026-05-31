@@ -1,12 +1,13 @@
 #!/usr/bin/python
 import customtkinter as ctk
-import src.views.Custom_Counter as Custom_Counter
 import CTkSpinbox
 import json
-import src.resources.mana as Mana
 import os
 import sys
 import tksvg
+import src.views.Custom_Counter as Custom_Counter
+import src.views.components.player_row as PlayerRow
+import src.resources.mana as Mana
 from src.viewmodels.tracker_view_model import TrackerViewModel
 
 
@@ -99,7 +100,7 @@ class Commander_Tracker(ctk.CTk):
         reset_all_button.grid(row = 1, column = 3, padx = (5,5), pady = (10,5))
 
         ## Create table header frame. ##
-        self.add_player_button = ctk.CTkButton(self.header_frame, text = "+", command = self.add_player, width = 25, height = 25)
+        self.add_player_button = ctk.CTkButton(self.header_frame, text = "+", command = self.add_player_row, width = 25, height = 25)
         self.add_player_button.grid(row = 0, column = 0, padx = (5,5), pady = (5,5))
 
         name_label = ctk.CTkLabel(self.header_frame, text = "Name", font = self.bold_font, width = 100)
@@ -113,90 +114,31 @@ class Commander_Tracker(ctk.CTk):
         
         ## Adds 3 players by default. ##
         for i in range(3):
-            self.add_player()
+            self.add_player_row()
 
         self.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
 
-    def add_player(self):
+    def add_player_row(self):
         """ Adds a new player row """
         
         player = self.viewmodel.add_player() # Add player to the ViewModel and get the player object back.
         
         row_index = len(self.player_rows)
+
         if row_index >= 9:
             self.add_player_button.configure(state = "disabled") # No more players beyond 10.
 
-        ## Player ##
-        delete_button = ctk.CTkButton(self.player_frame, text = "x", command = lambda p=player: self.delete_player(p), fg_color="darkred", width=25, height=25)
-        delete_button.grid(row = row_index, column = 0, padx = (5,5), pady = (0,5))
-        
-        ## Player Name Dropdown ##
-        player_name = ctk.CTkComboBox(
-            self.player_frame, 
-            values = self.saved_names, 
-            width = 150,
-            command = lambda value, p=player: 
-                self.viewmodel.update_player_name(p, value))
-        
-        player_name.set(player.name) # Set initial value to the player's name (default: ""
-        
-        player_name.bind(
-            "<KeyRelease>",
-            lambda event, p=player, w=player_name:
-              self.viewmodel.update_player_name(
-                  p, w.get())) # Bind the KeyRelease event to update the player name in the ViewModel
-        
-        player_name.grid(
-            row = row_index, 
-            column = 1, padx = (5,5), 
-            pady = (0,5), 
-            sticky = "ew")
+        row = PlayerRow.PlayerRow(
+            parent = self.player_frame,
+            player = player,
+            viewmodel = self.viewmodel,
+            saved_names = self.saved_names,
+            row_index = row_index
+        )
 
-        ## Player Damage Given Spinbox ##
-        player_given = CTkSpinbox.CTkSpinbox(
-            self.player_frame, 
-            start_value = player.damage_given, 
-            min_value = 0, 
-            max_value = 21, 
-            scroll_value = 1, 
-            font = ("Segoe UI", 13), 
-            width = 100, 
-            height = 30, 
-            border_width = 0,
-            corner_radius = 100, 
-            button_corner_radius = 100,
-            command = lambda value, p=player: 
-                self.viewmodel.update_player_damage_given(p, value))
-        
-        player_given.grid(
-            row = row_index, column = 2, 
-            padx = (5,5), pady = (0,5), 
-            sticky = "ew")
-        
-        ## Player Damage Taken Spinbox ##
-        player_taken = CTkSpinbox.CTkSpinbox(
-            self.player_frame, 
-            start_value = player.damage_taken, 
-            min_value = 0, 
-            max_value = 21, 
-            scroll_value = 1, 
-            font = ("Segoe UI", 13), 
-            width = 100, 
-            height = 30, 
-            border_width = 0,
-            corner_radius = 100, 
-            button_corner_radius = 100,
-            command = lambda value, p=player: 
-                self.viewmodel.update_player_damage_taken(p, value))
-        
-        player_taken.grid(
-            row = row_index, column = 3, 
-            padx = (5,5), pady = (0,5), 
-            sticky = "ew")
-        
-        self.player_rows.append((player, delete_button, player_name, player_given, player_taken))
-        self.update_layout()
-    
+        self.player_rows.append(row)
+        self.update_layout()       
+
     def delete_player(self, player):
         """Deletes a player row."""
         if len(self.player_rows) == 1:

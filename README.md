@@ -62,13 +62,13 @@ Python packages used:
 
 ## Running the Application
 ```bash
-python Commander_Tracker.py
+python main.py
 ```
 ---
 
 ## Building the Executable
 The project uses PyInstaller.
 
-Build with `pyinstaller Commander_Tracker.py --onefile -w --collect-all="tksvg"`, or run `build.bat`
+Build with `pyinstaller main.py --onefile -w --collect-all="tksvg"`, or run `build.bat`
 
 The executable will be created in `dist/Commander_Tracker.exe`

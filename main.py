@@ -1,6 +1,6 @@
 #!/usr/bin/python 
 import customtkinter as ctk 
-from src.views.commander_tracker_view import Commander_Tracker 
+from src.views.commander_tracker_view import Commander_Tracker as Commander_Tracker
 
 ## Window Settings ## 
 ctk.set_appearance_mode("dark") 

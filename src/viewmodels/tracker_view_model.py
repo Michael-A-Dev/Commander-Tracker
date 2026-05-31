@@ -19,11 +19,14 @@ class TrackerViewModel:
     def update_player_name(self, player: Player, new_name: str) -> None:
         """ Updates the name of a player """
         player.name = new_name
+        print(f"Updated player name to {new_name}") # For Debugging purposes
 
     def update_player_damage_given(self, player: Player, damage: int) -> None:
         """ Updates the damage given of a player """
         player.damage_given = damage
+        print(f"Updated player {player.name}'s damage given to {damage}") # For Debugging purposes
 
     def update_player_damage_taken(self, player: Player, damage: int) -> None:
         """ Updates the damage taken of a player """
         player.damage_taken = damage
+        print(f"Updated player {player.name}'s damage taken to {damage}") # For Debugging purposes
