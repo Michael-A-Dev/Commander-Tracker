@@ -6,7 +6,7 @@ import os
 import sys
 import tksvg
 import src.views.Custom_Counter as Custom_Counter
-import src.views.components.player_row as PlayerRow
+from src.views.components.player_row import PlayerRow
 import src.resources.mana as Mana
 from src.viewmodels.tracker_view_model import TrackerViewModel
 
@@ -119,7 +119,7 @@ class Commander_Tracker(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
 
     def add_player_row(self):
-        """ Adds a new player row """
+        """ Adds a new player row and associated player to the ViewModel """
         
         player = self.viewmodel.add_player() # Add player to the ViewModel and get the player object back.
         
@@ -128,7 +128,7 @@ class Commander_Tracker(ctk.CTk):
         if row_index >= 9:
             self.add_player_button.configure(state = "disabled") # No more players beyond 10.
 
-        row = PlayerRow.PlayerRow(
+        row = PlayerRow(
             parent = self.player_frame,
             player = player,
             viewmodel = self.viewmodel,
@@ -139,29 +139,26 @@ class Commander_Tracker(ctk.CTk):
         self.player_rows.append(row)
         self.update_layout()       
 
-    def delete_player(self, player):
-        """Deletes a player row."""
+    def delete_player_row(self, player):
+        """Deletes a player row and associated player from the ViewModel"""
         if len(self.player_rows) == 1:
             return
+        
         elif len(self.player_rows) == 10:
             self.add_player_button.configure(state = "normal") # Re-enable button once back under 10 players.
         
+        # Remove the player (and widgets) from the GUI
         for row in self.player_rows:
-            if row[0] is player:
-                for widget in row[1:]:
-                    widget.grid_forget()
-                    widget.destroy()
-
+            if row.player is player:
+                row.destroy()
                 self.player_rows.remove(row)
-                self.viewmodel.remove_player(player) # Remove player from the ViewModel
                 break
+
+        self.viewmodel.remove_player(player) # Remove player from the ViewModel
         
-        for new_index, player in enumerate(self.player_rows): # Reconfigure the rows to close any gaps.
-            player[1].grid_configure(row=new_index, column=0) # Delete Button
-            player[2].grid_configure(row=new_index, column=1) # Name Dropdown
-            player[3].grid_configure(row=new_index, column=2) # Damage Given
-            player[4].grid_configure(row=new_index, column=3) # Damage Received
-        
+        for index,row in enumerate(self.player_rows): # Reconfigure the rows to close any gaps.
+            row.update_row_index(index)
+
         self.update_layout()
 
     def get_exe_path(self):
