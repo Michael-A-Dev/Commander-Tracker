@@ -1,9 +1,9 @@
 #!/usr/bin/python
 import customtkinter as ctk
-import Custom_Counter
+import src.views.Custom_Counter as Custom_Counter
 import CTkSpinbox
 import json
-import Mana
+import src.resources.mana as Mana
 import os
 import sys
 import tksvg
