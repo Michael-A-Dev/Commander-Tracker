@@ -7,6 +7,7 @@ import Mana
 import os
 import sys
 import tksvg
+import src.models.player
 
 
 class Commander_Tracker(ctk.CTk):
