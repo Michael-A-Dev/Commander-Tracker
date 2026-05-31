@@ -21,7 +21,7 @@ class Commander_Tracker(ctk.CTk):
         self.config_path = os.path.join(self.get_exe_path(), self.config_file)
         self.config = self.load_config()
         self.pos = self.config.get('pos', {'x': 100, 'y': 100})
-        self.names = self.config.get('names', ["","No Names"])
+        self.saved_names = self.config.get('names', ["","No Names"]) # renamed to saved_names to avoid confusion with player.name
 
         ## Set initial window settings ##
         self.geometry(f"400x250+{self.pos['x']}+{self.pos['y']}")
@@ -63,7 +63,7 @@ class Commander_Tracker(ctk.CTk):
             x = 15 + i * 35
             y = 20
             counter_symbol_svg = tksvg.SvgImage(data=symbol)
-            counter_symbol = ctk.CTkLabel(self.counter_frame, text = "", image = counter_symbol_svg)
+            counter_symbol = ctk.CTkLabel(self.counter_frame, text = "", image = counter_symbol_svg) # type: ignore
             counter_symbol.place(x = x + 4, y = y, anchor = ctk.CENTER)
 
             counter = ctk.IntVar(value = 0)
@@ -120,30 +120,79 @@ class Commander_Tracker(ctk.CTk):
     def add_player(self):
         """ Adds a new player row """
         
-        player = self.viewmodel.add_player() # Add player to the ViewModel and get the player object back, in case we need to link it to the UI later.
+        player = self.viewmodel.add_player() # Add player to the ViewModel and get the player object back.
         
         row_index = len(self.player_rows)
         if row_index >= 9:
             self.add_player_button.configure(state = "disabled") # No more players beyond 10.
 
         ## Player ##
-        player_number = len(self.player_rows) # Row identifier
-
         delete_button = ctk.CTkButton(self.player_frame, text = "x", command = lambda p=player: self.delete_player(p), fg_color="darkred", width=25, height=25)
         delete_button.grid(row = row_index, column = 0, padx = (5,5), pady = (0,5))
         
-        player_name = ctk.CTkComboBox(self.player_frame, values = self.names, width = 150)
-        player_name.grid(row = row_index, column = 1, padx = (5,5), pady = (0,5), sticky = "ew")
+        ## Player Name Dropdown ##
+        player_name = ctk.CTkComboBox(
+            self.player_frame, 
+            values = self.saved_names, 
+            width = 150,
+            command = lambda value, p=player: 
+                self.viewmodel.update_player_name(p, value))
+        
+        player_name.set(player.name) # Set initial value to the player's name (default: ""
+        
+        player_name.bind(
+            "<KeyRelease>",
+            lambda event, p=player, w=player_name:
+              self.viewmodel.update_player_name(
+                  p, w.get())) # Bind the KeyRelease event to update the player name in the ViewModel
+        
+        player_name.grid(
+            row = row_index, 
+            column = 1, padx = (5,5), 
+            pady = (0,5), 
+            sticky = "ew")
 
-        player_given = CTkSpinbox.CTkSpinbox(self.player_frame, start_value = 0, min_value = 0, max_value = 21, scroll_value = 1, \
-                                             font = ("Segoe UI", 13), width = 100, height = 30, border_width = 0, \
-                                             corner_radius = 100, button_corner_radius = 100)
-        player_given.grid(row = row_index, column = 2, padx = (5,5), pady = (0,5), sticky = "ew")
-
-        player_taken = CTkSpinbox.CTkSpinbox(self.player_frame, start_value = 0, min_value = 0, max_value = 21, scroll_value = 1, \
-                                             font = ("Segoe UI", 13), width = 100, height = 30, border_width = 0, \
-                                             corner_radius = 100, button_corner_radius = 100)
-        player_taken.grid(row = row_index, column = 3, padx = (5,5), pady = (0,5), sticky = "ew")
+        ## Player Damage Given Spinbox ##
+        player_given = CTkSpinbox.CTkSpinbox(
+            self.player_frame, 
+            start_value = player.damage_given, 
+            min_value = 0, 
+            max_value = 21, 
+            scroll_value = 1, 
+            font = ("Segoe UI", 13), 
+            width = 100, 
+            height = 30, 
+            border_width = 0,
+            corner_radius = 100, 
+            button_corner_radius = 100,
+            command = lambda value, p=player: 
+                self.viewmodel.update_player_damage_given(p, value))
+        
+        player_given.grid(
+            row = row_index, column = 2, 
+            padx = (5,5), pady = (0,5), 
+            sticky = "ew")
+        
+        ## Player Damage Taken Spinbox ##
+        player_taken = CTkSpinbox.CTkSpinbox(
+            self.player_frame, 
+            start_value = player.damage_taken, 
+            min_value = 0, 
+            max_value = 21, 
+            scroll_value = 1, 
+            font = ("Segoe UI", 13), 
+            width = 100, 
+            height = 30, 
+            border_width = 0,
+            corner_radius = 100, 
+            button_corner_radius = 100,
+            command = lambda value, p=player: 
+                self.viewmodel.update_player_damage_taken(p, value))
+        
+        player_taken.grid(
+            row = row_index, column = 3, 
+            padx = (5,5), pady = (0,5), 
+            sticky = "ew")
         
         self.player_rows.append((player, delete_button, player_name, player_given, player_taken))
         self.update_layout()
@@ -193,7 +242,7 @@ class Commander_Tracker(ctk.CTk):
         """Save settings into a .json file"""
         config = {
             'pos': {'x': self.winfo_x(), 'y': self.winfo_y()},
-            'names': self.names
+            'names': self.saved_names
         }
         with open(self.config_path, 'w') as f:
             json.dump(config, f)
@@ -203,7 +252,7 @@ class Commander_Tracker(ctk.CTk):
         for player in self.player_rows:
             for p in player:
                 if type(p) == ctk.CTkComboBox:
-                    p.configure(values = self.names)
+                    p.configure(values = self.saved_names)
 
     def update_layout(self):
         """Forces an update and redraw of the window"""
@@ -262,8 +311,8 @@ class Commander_Tracker(ctk.CTk):
         def save_options(self):
             new_names = names_box.get("0.0", ctk.END).strip().split('\n')
             updated_names = [name.strip() for name in new_names]
-            self.names.clear()
-            self.names.extend(updated_names)
+            self.saved_names.clear()
+            self.saved_names.extend(updated_names)
             self.update_names()
             self.save_config()
             popup.destroy()
@@ -277,7 +326,7 @@ class Commander_Tracker(ctk.CTk):
     
         names_box = ctk.CTkTextbox(popup)
         names_box.grid(row = 0, rowspan = 5, column = 0, padx = (5, 5), pady = (5, 5))
-        names_box.insert("0.0", "\n".join(self.names))
+        names_box.insert("0.0", "\n".join(self.saved_names))
     
         instruction_label = ctk.CTkLabel(popup, text = self.instructions)
         instruction_label.grid(row = 0, column = 1, padx = (5, 5), pady = (5, 5))

@@ -15,3 +15,15 @@ class TrackerViewModel:
         """ Removes a player from the player list """
         if len(self.players) > 1:
             self.players.remove(player)
+
+    def update_player_name(self, player: Player, new_name: str) -> None:
+        """ Updates the name of a player """
+        player.name = new_name
+
+    def update_player_damage_given(self, player: Player, damage: int) -> None:
+        """ Updates the damage given of a player """
+        player.damage_given = damage
+
+    def update_player_damage_taken(self, player: Player, damage: int) -> None:
+        """ Updates the damage taken of a player """
+        player.damage_taken = damage
