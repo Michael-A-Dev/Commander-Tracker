@@ -128,7 +128,8 @@ class Commander_Tracker(ctk.CTk):
 
         ## Player ##
         player_number = len(self.player_rows) # Row identifier
-        delete_button = ctk.CTkButton(self.player_frame, text = "x", command = lambda: self.delete_player(player_number), fg_color="darkred", width=25, height=25)
+
+        delete_button = ctk.CTkButton(self.player_frame, text = "x", command = lambda p=player: self.delete_player(p), fg_color="darkred", width=25, height=25)
         delete_button.grid(row = row_index, column = 0, padx = (5,5), pady = (0,5))
         
         player_name = ctk.CTkComboBox(self.player_frame, values = self.names, width = 150)
@@ -144,22 +145,24 @@ class Commander_Tracker(ctk.CTk):
                                              corner_radius = 100, button_corner_radius = 100)
         player_taken.grid(row = row_index, column = 3, padx = (5,5), pady = (0,5), sticky = "ew")
         
-        self.player_rows.append((player_number, delete_button, player_name, player_given, player_taken))
+        self.player_rows.append((player, delete_button, player_name, player_given, player_taken))
         self.update_layout()
     
-    def delete_player(self, index):
+    def delete_player(self, player):
         """Deletes a player row."""
         if len(self.player_rows) == 1:
             return
         elif len(self.player_rows) == 10:
             self.add_player_button.configure(state = "normal") # Re-enable button once back under 10 players.
         
-        for player in self.player_rows:
-            if player[0] == index:
-                for widget in player[1:]:
+        for row in self.player_rows:
+            if row[0] is player:
+                for widget in row[1:]:
                     widget.grid_forget()
                     widget.destroy()
-                self.player_rows.remove(player)
+
+                self.player_rows.remove(row)
+                self.viewmodel.remove_player(player) # Remove player from the ViewModel
                 break
         
         for new_index, player in enumerate(self.player_rows): # Reconfigure the rows to close any gaps.
