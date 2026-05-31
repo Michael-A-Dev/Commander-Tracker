@@ -7,13 +7,14 @@ import Mana
 import os
 import sys
 import tksvg
-import src.models.player
+from src.viewmodels.tracker_view_model import TrackerViewModel
 
 
 class Commander_Tracker(ctk.CTk):
     def __init__(self, *args, **kwargs):
         ctk.CTk.__init__(self, *args, **kwargs)
         self.instructions = "Enter your player names in the box to the left.\nEach name should be on a new line."
+        self.viewmodel = TrackerViewModel()
         
         ## Load options from config ##
         self.config_file = "tracker_config.json"
@@ -117,7 +118,9 @@ class Commander_Tracker(ctk.CTk):
         self.protocol("WM_DELETE_WINDOW", lambda: self.on_close())
 
     def add_player(self):
-        """Adds a new player row."""
+        """ Adds a new player row """
+        
+        player = self.viewmodel.add_player() # Add player to the ViewModel and get the player object back, in case we need to link it to the UI later.
         
         row_index = len(self.player_rows)
         if row_index >= 9:
