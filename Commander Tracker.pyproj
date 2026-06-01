@@ -4,13 +4,15 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>27c182f1-31b0-40c9-a8d3-a66d04bd3153</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>Commander_Tracker.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
     <Name>Commander Tracker</Name>
     <RootNamespace>Commander Tracker</RootNamespace>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <SuppressPackageInstallationPrompt>True</SuppressPackageInstallationPrompt>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -21,9 +23,67 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="Commander_Tracker.py" />
-    <Compile Include="Custom_Counter.py" />
-    <Compile Include="Mana.py" />
+    <Compile Include="main.py" />
+    <Compile Include="src\models\player.py" />
+    <Compile Include="src\models\__init__.py" />
+    <Compile Include="src\resources\config.py" />
+    <Compile Include="src\resources\mana.py" />
+    <Compile Include="src\viewmodels\tracker_view_model.py" />
+    <Compile Include="src\viewmodels\__init__.py" />
+    <Compile Include="src\views\commander_tracker.py" />
+    <Compile Include="src\views\custom_counter.py" />
+    <Compile Include="src\views\options_window.py" />
+    <Compile Include="src\views\player_row.py" />
+    <Compile Include="src\views\__init__.py" />
+  </ItemGroup>
+  <ItemGroup>
+    <Interpreter Include="env\">
+      <Id>env</Id>
+      <Version>3.12</Version>
+      <Description>env (Python 3.12 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include=".github\CONTRIBUTING.md" />
+    <Content Include=".github\ISSUE_TEMPLATE\bug_report.md" />
+    <Content Include=".github\ISSUE_TEMPLATE\feature_request.md" />
+    <Content Include=".github\PULL_REQUEST_TEMPLATE\pull_request_template.md" />
+    <Content Include=".gitignore" />
+    <Content Include="build.bat" />
+    <Content Include="image\app_screenshot.png" />
+    <Content Include="LICENSE" />
+    <Content Include="README.md" />
+    <Content Include="src\models\__pycache__\player.cpython-312.pyc" />
+    <Content Include="src\models\__pycache__\__init__.cpython-312.pyc" />
+    <Content Include="src\resources\__pycache__\config.cpython-312.pyc" />
+    <Content Include="src\resources\__pycache__\mana.cpython-312.pyc" />
+    <Content Include="src\viewmodels\__pycache__\tracker_view_model.cpython-312.pyc" />
+    <Content Include="src\viewmodels\__pycache__\__init__.cpython-312.pyc" />
+    <Content Include="src\views\__pycache__\commander_tracker.cpython-312.pyc" />
+    <Content Include="src\views\__pycache__\commander_tracker_view.cpython-312.pyc" />
+    <Content Include="src\views\__pycache__\custom_counter.cpython-312.pyc" />
+    <Content Include="src\views\__pycache__\options_window.cpython-312.pyc" />
+    <Content Include="src\views\__pycache__\player_row.cpython-312.pyc" />
+    <Content Include="src\views\__pycache__\__init__.cpython-312.pyc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include=".github\" />
+    <Folder Include=".github\ISSUE_TEMPLATE\" />
+    <Folder Include=".github\PULL_REQUEST_TEMPLATE\" />
+    <Folder Include="image\" />
+    <Folder Include="src\" />
+    <Folder Include="src\models\" />
+    <Folder Include="src\models\__pycache__\" />
+    <Folder Include="src\resources\" />
+    <Folder Include="src\resources\__pycache__\" />
+    <Folder Include="src\viewmodels\" />
+    <Folder Include="src\viewmodels\__pycache__\" />
+    <Folder Include="src\views\" />
+    <Folder Include="src\views\__pycache__\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
