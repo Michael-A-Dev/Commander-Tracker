@@ -145,11 +145,14 @@ class Commander_Tracker(ctk.CTk):
         if len(self.player_rows) == 1:
             return
         
+        
         elif len(self.player_rows) == 10:
             self.add_player_button.configure(state = "normal") # Re-enable button once back under 10 players.
         
         # Remove the player row from the GUI
         for row in self.player_rows:
+            if row.player is player:
+                row.destroy()
             if row.player is player:
                 row.destroy()
                 self.player_rows.remove(row)
