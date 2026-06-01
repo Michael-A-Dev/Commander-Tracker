@@ -1,31 +1,20 @@
 #!/usr/bin/python
 import customtkinter as ctk
-import CTkSpinbox
-import json
-import os
-import sys
 import tksvg
-import src.views.Custom_Counter as Custom_Counter
-from src.views.components.player_row import PlayerRow
+from src.views.custom_counter import CustomCounter
+from src.views.player_row import PlayerRow
 import src.resources.mana as Mana
 from src.viewmodels.tracker_view_model import TrackerViewModel
 
 
-class Commander_Tracker(ctk.CTk):
+class CommanderTracker(ctk.CTk):
     def __init__(self, *args, **kwargs):
         ctk.CTk.__init__(self, *args, **kwargs)
         self.instructions = "Enter your player names in the box to the left.\nEach name should be on a new line."
         self.viewmodel = TrackerViewModel()
-        
-        ## Load options from config ##
-        self.config_file = "tracker_config.json"
-        self.config_path = os.path.join(self.get_exe_path(), self.config_file)
-        self.config = self.load_config()
-        self.pos = self.config.get('pos', {'x': 100, 'y': 100})
-        self.saved_names = self.config.get('names', ["","No Names"]) # renamed to saved_names to avoid confusion with player.name
 
         ## Set initial window settings ##
-        self.geometry(f"400x250+{self.pos['x']}+{self.pos['y']}")
+        self.geometry(f"400x250+{self.viewmodel.pos['x']}+{self.viewmodel.pos['y']}")
         self.title("Commander Tracker")
         self.resizable(False, False)
 
@@ -132,7 +121,7 @@ class Commander_Tracker(ctk.CTk):
             parent = self.player_frame,
             player = player,
             viewmodel = self.viewmodel,
-            saved_names = self.saved_names,
+            saved_names = self.viewmodel.saved_names,
             row_index = row_index,
             delete_callback = self.delete_player_row
         )
@@ -161,38 +150,6 @@ class Commander_Tracker(ctk.CTk):
         self.viewmodel.remove_player(player) # Remove player from the ViewModel
 
         self.update_layout()
-
-    def get_exe_path(self):
-        """Gets the absolute path of the running script.
-        
-        This is used for saving/loading the config."""
-        return os.path.dirname(os.path.abspath(sys.argv[0]))
-    
-    def load_config(self):
-        """Load settings from a .json file"""
-        if os.path.exists(self.config_path):
-            with open(self.config_path, 'r') as f:
-                try:
-                    return json.load(f)
-                except json.JSONDecodeError:
-                    return {'pos': {'x': 100, 'y': 100}, 'names': [""]}
-        return {'pos': {'x': 100, 'y': 100}, 'names': [""]}
-
-    def save_config(self):
-        """Save settings into a .json file"""
-        config = {
-            'pos': {'x': self.winfo_x(), 'y': self.winfo_y()},
-            'names': self.saved_names
-        }
-        with open(self.config_path, 'w') as f:
-            json.dump(config, f)
-    
-    def update_names(self):
-        """Updates the available names in the player dropdown boxes"""
-        for player in self.player_rows:
-            for p in player:
-                if type(p) == ctk.CTkComboBox:
-                    p.configure(values = self.saved_names)
 
     def update_layout(self):
         """Forces an update and redraw of the window"""
@@ -252,10 +209,9 @@ class Commander_Tracker(ctk.CTk):
         def save_options(self):
             new_names = names_box.get("0.0", ctk.END).strip().split('\n')
             updated_names = [name.strip() for name in new_names]
-            self.saved_names.clear()
-            self.saved_names.extend(updated_names)
-            self.update_names()
-            self.save_config()
+            self.viewmodel.saved_names.clear()
+            self.viewmodel.saved_names.extend(updated_names)
+            self.viewmodel.update_and_save_names(updated_names)
             popup.destroy()
     
         root_x = self.winfo_x() + 10
@@ -267,7 +223,7 @@ class Commander_Tracker(ctk.CTk):
     
         names_box = ctk.CTkTextbox(popup)
         names_box.grid(row = 0, rowspan = 5, column = 0, padx = (5, 5), pady = (5, 5))
-        names_box.insert("0.0", "\n".join(self.saved_names))
+        names_box.insert("0.0", "\n".join(self.viewmodel.saved_names))
     
         instruction_label = ctk.CTkLabel(popup, text = self.instructions)
         instruction_label.grid(row = 0, column = 1, padx = (5, 5), pady = (5, 5))
@@ -284,7 +240,7 @@ class Commander_Tracker(ctk.CTk):
         def create_custom_counter(event = None):
             popup.destroy()
             if not name.get() == "":
-                Custom_Counter.Custom_Counter(self, name.get())
+                CustomCounter(self, name.get())
     
         root_x = self.winfo_x() + 10
         root_y = self.winfo_y() + 10
@@ -309,13 +265,8 @@ class Commander_Tracker(ctk.CTk):
         popup.grab_set()
 
     def on_close(self):
-        self.save_config()
+        self.viewmodel.save_window_position(
+            self.winfo_x(),
+            self.winfo_y()
+        )
         self.destroy()
-
-if __name__ == "__main__":
-    ## Window Settings ##
-    ctk.set_appearance_mode("dark")
-    ctk.set_default_color_theme("dark-blue")
-    
-    root = Commander_Tracker()
-    root.mainloop()

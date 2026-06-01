@@ -1,9 +1,19 @@
+from src.resources.config import Config
 from src.models.player import Player
 
 class TrackerViewModel:
     """ ViewModel to represent the state of the tracker view """
     def __init__(self):
         self.players: list[Player] =[]
+        self.config = Config()
+
+    @property
+    def saved_names(self):
+        return self.config.saved_names
+
+    @property
+    def pos(self):
+        return self.config.pos
 
     def add_player(self) -> Player:
         """ Adds a player to the player list and returns the player object """
@@ -46,3 +56,14 @@ class TrackerViewModel:
             player.damage_given = 0
             player.damage_taken = 0
         print("Reset all players") # For Debugging purposes
+
+    def update_and_save_names(self, names: list[str]):
+        """ Updates the saved names in the config and saves the config """
+        self.config.saved_names = names
+        self.config.save_config()
+        print(f"Updated and saved names: {names}") # For Debugging purposes
+
+    def save_window_position(self, x: int, y: int):
+        self.config.pos = {"x": x, "y": y}
+        self.config.save_config()
+        print(f"Saved window position: x={x}, y={y}") # For Debugging purposes
