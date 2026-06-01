@@ -3,6 +3,7 @@ import customtkinter as ctk
 import tksvg
 from src.views.custom_counter import CustomCounter
 from src.views.player_row import PlayerRow
+from src.views.options_window import OptionsWindow
 import src.resources.mana as Mana
 from src.viewmodels.tracker_view_model import TrackerViewModel
 
@@ -10,7 +11,6 @@ from src.viewmodels.tracker_view_model import TrackerViewModel
 class CommanderTracker(ctk.CTk):
     def __init__(self, *args, **kwargs):
         ctk.CTk.__init__(self, *args, **kwargs)
-        self.instructions = "Enter your player names in the box to the left.\nEach name should be on a new line."
         self.viewmodel = TrackerViewModel()
 
         ## Set initial window settings ##
@@ -206,34 +206,7 @@ class CommanderTracker(ctk.CTk):
         
     def options_window(self):
         """Opens the options popup window."""
-        def save_options(self):
-            new_names = names_box.get("0.0", ctk.END).strip().split('\n')
-            updated_names = [name.strip() for name in new_names]
-            self.viewmodel.saved_names.clear()
-            self.viewmodel.saved_names.extend(updated_names)
-            self.viewmodel.update_and_save_names(updated_names)
-            popup.destroy()
-    
-        root_x = self.winfo_x() + 10
-        root_y = self.winfo_y() + 10
-        popup = ctk.CTkToplevel(self)
-        popup.title("Names List")
-        popup.geometry(f"500x210+{root_x}+{root_y}")
-        popup.resizable(False, False)
-    
-        names_box = ctk.CTkTextbox(popup)
-        names_box.grid(row = 0, rowspan = 5, column = 0, padx = (5, 5), pady = (5, 5))
-        names_box.insert("0.0", "\n".join(self.viewmodel.saved_names))
-    
-        instruction_label = ctk.CTkLabel(popup, text = self.instructions)
-        instruction_label.grid(row = 0, column = 1, padx = (5, 5), pady = (5, 5))
-    
-        save_button = ctk.CTkButton(popup, text = "Save Names", command = lambda: save_options(self))
-        save_button.grid(row = 4, column = 1, padx = (5, 5), pady = (5, 5))
-    
-        popup.transient(self)
-        popup.focus()
-        popup.grab_set()
+        OptionsWindow(self, self.viewmodel)
     
     def custom_counter_window(self):
         """Opens the custom counter window and creates a customised counter"""
