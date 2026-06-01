@@ -37,6 +37,7 @@ class TrackerViewModel:
         for player in self.players:
             player.damage_given = 0
             player.damage_taken = 0
+        print("Reset all players' damage") # For Debugging purposes
 
     def reset_players(self) -> None:
         """ Resets all players' names to "" and damage given/taken to 0 """
@@ -44,3 +45,4 @@ class TrackerViewModel:
             player.name = ""
             player.damage_given = 0
             player.damage_taken = 0
+        print("Reset all players") # For Debugging purposes

@@ -145,14 +145,11 @@ class Commander_Tracker(ctk.CTk):
         if len(self.player_rows) == 1:
             return
         
-        
         elif len(self.player_rows) == 10:
             self.add_player_button.configure(state = "normal") # Re-enable button once back under 10 players.
         
         # Remove the player row from the GUI
         for row in self.player_rows:
-            if row.player is player:
-                row.destroy()
             if row.player is player:
                 row.destroy()
                 self.player_rows.remove(row)
@@ -204,21 +201,22 @@ class Commander_Tracker(ctk.CTk):
 
     def reset_damage(self):
         """Reset all damage counters."""
-        for player in self.player_rows:
-            for p in player:
-                if type(p) == CTkSpinbox.CTkSpinbox:
-                    p.set(0)
+        self.viewmodel.reset_damage()
+
+        for row in self.player_rows:
+            row.given_box.set(0)
+            row.taken_box.set(0)
 
     def reset_all(self):
         """Resets all widgets to a completely blank state"""
-        for player in self.player_rows:
-            for p in player:
-                if type(p) == ctk.CTkComboBox:
-                    p.set("")
-                if type(p) == CTkSpinbox.CTkSpinbox:
-                    p.set(0)
+        self.viewmodel.reset_players()
+        
+        for row in self.player_rows:
+            row.given_box.set(0)
+            row.taken_box.set(0)
+            row.name_box.set("")
     
-        self.clear_all_counters()
+        self.clear_all_counters() # Resets mana/poison/energy counters to 0 as well.
     
     def event_handler(self, event, counter):
         """Handles click events on the mana/poison/energy counters"""
