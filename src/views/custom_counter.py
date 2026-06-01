@@ -1,7 +1,7 @@
 import customtkinter as ctk
 import CTkSpinbox
 
-class Custom_Counter(object):
+class CustomCounter(object):
     def __init__(self, parent, name):
         self.parent = parent
         self.root = ctk.CTkToplevel(self.parent)
